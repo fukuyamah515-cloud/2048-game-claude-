@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/2048-game-claude-/',
   plugins: [react()],
   test: {
     environment: 'jsdom',
