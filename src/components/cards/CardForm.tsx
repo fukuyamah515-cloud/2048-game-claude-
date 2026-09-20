@@ -142,6 +142,28 @@ export function CardForm({ initialValue, onSubmit, onCancel }: CardFormProps) {
           ))}
         </select>
       </label>
+      <label>
+        紹介者
+        <input
+          value={form.introducedBy}
+          onChange={(e) => handleChange('introducedBy', e.target.value)}
+        />
+      </label>
+      <label>
+        出会った場所・イベント
+        <input value={form.metAt} onChange={(e) => handleChange('metAt', e.target.value)} />
+      </label>
+      <label>
+        業種
+        <input value={form.industry} onChange={(e) => handleChange('industry', e.target.value)} />
+      </label>
+      <label>
+        宗派
+        <input
+          value={form.religiousAffiliation}
+          onChange={(e) => handleChange('religiousAffiliation', e.target.value)}
+        />
+      </label>
 
       <div className="card-form-actions">
         <button type="submit">保存</button>

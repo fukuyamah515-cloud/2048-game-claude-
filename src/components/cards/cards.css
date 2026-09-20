@@ -159,3 +159,109 @@
   font-size: 0.8rem;
   padding: 6px 10px;
 }
+
+.card-manager-view-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-manager-view-toggle button.active {
+  background: #8f7a66;
+}
+
+.card-manager-view-toggle select {
+  padding: 6px 10px;
+  border: 1px solid #bbada0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.card-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-group-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #776e65;
+}
+
+.card-group + .card-group {
+  margin-top: 16px;
+}
+
+.card-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(238, 228, 218, 0.35);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.card-detail-name {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.card-detail-meta {
+  margin: 0;
+  color: #776e65;
+  font-size: 0.9rem;
+}
+
+.card-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.card-timeline-form {
+  display: flex;
+  gap: 8px;
+}
+
+.card-timeline-form input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #bbada0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.card-timeline-empty {
+  color: #776e65;
+  font-size: 0.85rem;
+}
+
+.card-timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-timeline-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.card-timeline-date {
+  font-size: 0.75rem;
+  color: #776e65;
+}
+
+.card-timeline-text {
+  font-size: 0.9rem;
+}

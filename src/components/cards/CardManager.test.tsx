@@ -98,4 +98,44 @@ describe('CardManager', () => {
 
     expect(screen.getByRole('button', { name: '連絡先に追加' })).toBeInTheDocument()
   })
+
+  it('switches to group view and groups cards by the selected key', async () => {
+    const user = userEvent.setup()
+    render(<CardManager />)
+
+    for (const [name, industry] of [
+      ['山田太郎', 'IT'],
+      ['鈴木花子', 'IT'],
+    ] as const) {
+      await user.click(screen.getByRole('button', { name: '+ 新規追加' }))
+      await user.type(screen.getByLabelText('氏名 *'), name)
+      await user.type(screen.getByLabelText('業種'), industry)
+      await user.click(screen.getByRole('button', { name: '保存' }))
+    }
+
+    await user.click(screen.getByRole('button', { name: 'グループ表示' }))
+    await user.selectOptions(screen.getByRole('combobox'), '業種ごと')
+    expect(screen.getByText('IT（2件）')).toBeInTheDocument()
+
+    await user.selectOptions(screen.getByRole('combobox'), '宗派ごと')
+    expect(screen.getByText('未分類（2件）')).toBeInTheDocument()
+  })
+
+  it('opens a card detail view and adds a timeline note', async () => {
+    const user = userEvent.setup()
+    render(<CardManager />)
+
+    await user.click(screen.getByRole('button', { name: '+ 新規追加' }))
+    await user.type(screen.getByLabelText('氏名 *'), '山田太郎')
+    await user.click(screen.getByRole('button', { name: '保存' }))
+
+    await user.click(screen.getByRole('button', { name: '詳細' }))
+    await user.type(screen.getByPlaceholderText('やり取りのメモを追加'), 'ランチをご一緒した')
+    await user.click(screen.getByRole('button', { name: '追加' }))
+
+    expect(screen.getByText('ランチをご一緒した')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
+    expect(screen.getByText('山田太郎')).toBeInTheDocument()
+  })
 })

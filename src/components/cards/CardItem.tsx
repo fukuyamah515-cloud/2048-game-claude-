@@ -7,6 +7,7 @@ interface CardItemProps {
   card: BusinessCard
   onEdit: (card: BusinessCard) => void
   onDelete: (id: string) => void
+  onOpenDetail: (card: BusinessCard) => void
 }
 
 function formatDate(value: number | null): string {
@@ -29,7 +30,7 @@ function handleAddToContacts(card: BusinessCard) {
   URL.revokeObjectURL(url)
 }
 
-export function CardItem({ card, onEdit, onDelete }: CardItemProps) {
+export function CardItem({ card, onEdit, onDelete, onOpenDetail }: CardItemProps) {
   const overdue = isOverdue(card)
 
   return (
@@ -50,6 +51,9 @@ export function CardItem({ card, onEdit, onDelete }: CardItemProps) {
         </p>
       </div>
       <div className="card-item-actions">
+        <button type="button" onClick={() => onOpenDetail(card)}>
+          詳細
+        </button>
         <button type="button" onClick={() => onEdit(card)}>
           編集
         </button>
