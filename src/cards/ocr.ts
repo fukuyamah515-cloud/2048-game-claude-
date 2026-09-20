@@ -47,41 +47,6 @@ function loadImage(file: File): Promise<HTMLImageElement> {
   })
 }
 
-/**
- * Converts to grayscale and stretches the result to fill the full 0-255
- * range. This helps when a photo's contrast is muted (dim lighting, a faint
- * background pattern showing through the card) — it does not undo heavier
- * visual noise like a stamp or logo overlapping the text.
- */
-function enhanceContrast(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-  const imageData = ctx.getImageData(0, 0, width, height)
-  const data = imageData.data
-
-  for (let i = 0; i < data.length; i += 4) {
-    const gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]
-    data[i] = gray
-    data[i + 1] = gray
-    data[i + 2] = gray
-  }
-
-  let min = 255
-  let max = 0
-  for (let i = 0; i < data.length; i += 4) {
-    if (data[i] < min) min = data[i]
-    if (data[i] > max) max = data[i]
-  }
-
-  const range = max - min || 1
-  for (let i = 0; i < data.length; i += 4) {
-    const stretched = ((data[i] - min) / range) * 255
-    data[i] = stretched
-    data[i + 1] = stretched
-    data[i + 2] = stretched
-  }
-
-  ctx.putImageData(imageData, 0, 0)
-}
-
 function rotateToCanvas(
   source: CanvasImageSource,
   width: number,
@@ -98,8 +63,6 @@ function rotateToCanvas(
   ctx.translate(canvas.width / 2, canvas.height / 2)
   ctx.rotate((degrees * Math.PI) / 180)
   ctx.drawImage(source, -width / 2, -height / 2)
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
-  enhanceContrast(ctx, canvas.width, canvas.height)
   return canvas
 }
 
