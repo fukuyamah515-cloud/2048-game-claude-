@@ -11,10 +11,15 @@ import './cards.css'
 
 type Mode =
   | { kind: 'list' }
-  | { kind: 'add'; prefill?: Partial<BusinessCardInput> }
+  | { kind: 'add'; prefill?: Partial<BusinessCardInput>; queue: Partial<BusinessCardInput>[] }
   | { kind: 'edit'; card: BusinessCard }
   | { kind: 'import' }
   | { kind: 'detail'; cardId: string }
+
+function nextModeAfterAdd(queue: Partial<BusinessCardInput>[]): Mode {
+  const [prefill, ...rest] = queue
+  return queue.length > 0 ? { kind: 'add', prefill, queue: rest } : { kind: 'list' }
+}
 
 const GROUP_KEY_LABELS: Record<GroupKey, string> = {
   company: '会社',
@@ -41,7 +46,7 @@ export function CardManager() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button type="button" onClick={() => setMode({ kind: 'add' })}>
+        <button type="button" onClick={() => setMode({ kind: 'add', queue: [] })}>
           + 新規追加
         </button>
         <button type="button" onClick={() => setMode({ kind: 'import' })}>
@@ -79,20 +84,31 @@ export function CardManager() {
 
       {mode.kind === 'import' && (
         <CardImageImport
-          onExtracted={(fields) => setMode({ kind: 'add', prefill: fields })}
+          onExtracted={(fieldsList) => {
+            const [prefill, ...queue] = fieldsList
+            setMode({ kind: 'add', prefill, queue })
+          }}
           onCancel={() => setMode({ kind: 'list' })}
         />
       )}
 
       {mode.kind === 'add' && (
-        <CardForm
-          initialValue={mode.prefill}
-          onSubmit={(input) => {
-            addCard(input)
-            setMode({ kind: 'list' })
-          }}
-          onCancel={() => setMode({ kind: 'list' })}
-        />
+        <>
+          {mode.queue.length > 0 && (
+            <p className="card-import-progress">
+              残り{mode.queue.length}件を読み込み待ちです。1件ずつ確認して保存してください。
+            </p>
+          )}
+          <CardForm
+            key={mode.queue.length}
+            initialValue={mode.prefill}
+            onSubmit={(input) => {
+              addCard(input)
+              setMode(nextModeAfterAdd(mode.queue))
+            }}
+            onCancel={() => setMode(nextModeAfterAdd(mode.queue))}
+          />
+        </>
       )}
 
       {mode.kind === 'edit' && (

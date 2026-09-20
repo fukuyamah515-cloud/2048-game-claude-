@@ -1,7 +1,28 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CardManager } from './CardManager'
+import type { BusinessCardInput } from '../../cards/types'
+
+vi.mock('./CardImageImport', () => ({
+  CardImageImport: ({
+    onExtracted,
+  }: {
+    onExtracted: (fieldsList: Partial<BusinessCardInput>[]) => void
+  }) => (
+    <button
+      type="button"
+      onClick={() =>
+        onExtracted([
+          { name: '候補1', company: '会社A' },
+          { name: '候補2', company: '会社B' },
+        ])
+      }
+    >
+      モック取り込み実行
+    </button>
+  ),
+}))
 
 describe('CardManager', () => {
   beforeEach(() => {
@@ -137,5 +158,27 @@ describe('CardManager', () => {
 
     await user.click(screen.getByRole('button', { name: '← 一覧に戻る' }))
     expect(screen.getByText('山田太郎')).toBeInTheDocument()
+  })
+
+  it('walks through a multi-card import queue one card at a time', async () => {
+    const user = userEvent.setup()
+    render(<CardManager />)
+
+    await user.click(screen.getByRole('button', { name: '名刺画像から追加' }))
+    await user.click(screen.getByRole('button', { name: 'モック取り込み実行' }))
+
+    expect(screen.getByLabelText('氏名 *')).toHaveValue('候補1')
+    expect(
+      screen.getByText('残り1件を読み込み待ちです。1件ずつ確認して保存してください。'),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '保存' }))
+
+    expect(screen.getByLabelText('氏名 *')).toHaveValue('候補2')
+
+    await user.click(screen.getByRole('button', { name: '保存' }))
+
+    expect(screen.getByText('候補1')).toBeInTheDocument()
+    expect(screen.getByText('候補2')).toBeInTheDocument()
   })
 })
