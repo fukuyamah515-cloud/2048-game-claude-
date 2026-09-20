@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import type { BusinessCard, BusinessCardInput, FollowUpStatus } from '../../cards/types'
+import type { BusinessCardInput, FollowUpStatus } from '../../cards/types'
 
 interface CardFormProps {
-  initialValue?: BusinessCard
+  initialValue?: Partial<BusinessCardInput>
   onSubmit: (input: BusinessCardInput) => void
   onCancel: () => void
 }
@@ -28,7 +28,7 @@ const FOLLOW_UP_LABELS: Record<FollowUpStatus, string> = {
   done: '対応済み',
 }
 
-function toFormState(card?: BusinessCard) {
+function toFormState(card?: Partial<BusinessCardInput>) {
   return {
     name: card?.name ?? '',
     company: card?.company ?? '',
