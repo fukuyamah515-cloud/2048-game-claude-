@@ -52,11 +52,20 @@ describe('extractCardFieldsFromImage', () => {
     vi.stubGlobal('Image', FakeImage)
     URL.createObjectURL = vi.fn(() => 'blob:fake')
     URL.revokeObjectURL = vi.fn()
-    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
-      translate: vi.fn(),
-      rotate: vi.fn(),
-      drawImage: vi.fn(),
-    } as unknown as CanvasRenderingContext2D)
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(function (
+      this: HTMLCanvasElement,
+    ) {
+      return {
+        translate: vi.fn(),
+        rotate: vi.fn(),
+        drawImage: vi.fn(),
+        setTransform: vi.fn(),
+        getImageData: vi.fn(() => ({
+          data: new Uint8ClampedArray(this.width * this.height * 4),
+        })),
+        putImageData: vi.fn(),
+      } as unknown as CanvasRenderingContext2D
+    })
   })
 
   it('loads both a horizontal and a vertical language model', async () => {
